@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rover Control · Update Center</title>
+<meta name="theme-color" content="#020A12">
+<style>
+  :root {
+    --bg: #020a12; --surface: #071724; --raised: #0b2234;
+    --accent: #19e3ff; --muted: #6f9bb3; --amber: #ffb02e; --text: #d9f6ff;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    min-height: 100vh; color: var(--text); background: var(--bg);
+    font-family: Consolas, "Roboto Mono", "SFMono-Regular", Menlo, monospace;
+    background-image:
+      radial-gradient(ellipse at top, rgba(25,227,255,.12), transparent 60%),
+      linear-gradient(rgba(25,227,255,.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(25,227,255,.035) 1px, transparent 1px);
+    background-size: 100% 100%, 44px 44px, 44px 44px;
+  }
+  main { max-width: 860px; margin: 0 auto; padding: 32px 18px 48px; }
+  header { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }
+  .reactor {
+    width: 46px; height: 46px; border-radius: 50%; flex: none;
+    border: 3px solid var(--accent);
+    background: radial-gradient(circle, #fff 0 22%, rgba(25,227,255,.55) 23% 45%, transparent 46%);
+    box-shadow: 0 0 18px rgba(25,227,255,.6), inset 0 0 12px rgba(25,227,255,.5);
+    animation: spin 8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .reactor { animation: none; } }
+  h1 {
+    margin: 0; font-size: clamp(15px, 3.4vw, 20px); letter-spacing: .14em;
+    color: var(--accent); text-shadow: 0 0 12px rgba(25,227,255,.6);
+  }
+  .sub { color: var(--muted); font-size: 12px; letter-spacing: .08em; margin-top: 3px; }
+  .panel {
+    position: relative; background: rgba(7,23,36,.78);
+    border: 1px solid rgba(25,227,255,.2); padding: 22px; margin-bottom: 18px;
+    box-shadow: 0 0 24px rgba(25,227,255,.07);
+  }
+  .panel::before, .panel::after {
+    content: ""; position: absolute; width: 16px; height: 16px;
+    border: 2px solid var(--accent);
+  }
+  .panel::before { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
+  .panel::after { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
+  .label {
+    display: flex; align-items: center; gap: 8px; color: var(--accent);
+    font-size: 11px; font-weight: 800; letter-spacing: .25em; margin-bottom: 14px;
+  }
+  .label::before { content: ""; width: 6px; height: 6px; background: var(--accent); }
+  .version { font-size: clamp(30px, 8vw, 44px); font-weight: 800; color: #fff; }
+  .version small { font-size: 13px; color: var(--muted); font-weight: 400; margin-left: 10px; }
+  ul.notes { margin: 14px 0 0; padding-left: 18px; color: var(--text); line-height: 1.7; font-size: 14px; }
+  .downloads { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 22px; }
+  a.btn {
+    display: flex; align-items: center; gap: 12px; padding: 16px 18px;
+    text-decoration: none; color: var(--accent); font-weight: 800; letter-spacing: .08em;
+    border: 1.5px solid rgba(25,227,255,.7); background: rgba(25,227,255,.06);
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+    transition: background .15s, box-shadow .15s;
+  }
+  a.btn:hover, a.btn:focus-visible { background: rgba(25,227,255,.16); outline: none; }
+  a.btn.primary { background: var(--accent); color: #021018; border-color: var(--accent); }
+  a.btn.primary:hover { background: #6cefff; }
+  a.btn[aria-disabled="true"] { opacity: .35; pointer-events: none; }
+  a.btn svg { flex: none; }
+  a.btn span small { display: block; font-weight: 400; font-size: 11px; letter-spacing: .04em; opacity: .8; margin-top: 2px; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+  .tabs button {
+    font: inherit; font-size: 12px; letter-spacing: .1em; cursor: pointer;
+    background: transparent; color: var(--muted); padding: 8px 14px;
+    border: 1px solid rgba(111,155,179,.35);
+  }
+  .tabs button[aria-selected="true"] { color: var(--accent); border-color: var(--accent); background: rgba(25,227,255,.08); }
+  ol.steps { margin: 0; padding-left: 20px; line-height: 1.8; font-size: 14px; }
+  ol.steps b { color: var(--accent); font-weight: 700; }
+  .note { margin-top: 14px; padding: 12px 14px; font-size: 12px; line-height: 1.6;
+    border-left: 3px solid var(--amber); background: rgba(255,176,46,.07); color: #ffd99a; }
+  .status { color: var(--muted); font-size: 13px; }
+  .error { color: #ffb3be; }
+  footer { color: var(--muted); font-size: 11px; text-align: center; letter-spacing: .08em; margin-top: 30px; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="reactor" aria-hidden="true"></div>
+    <div>
+      <h1>ROVER CONTROL // UPDATE CENTER</h1>
+      <div class="sub">ESP32 · RASPBERRY PI ROVER CONTROLLER</div>
+    </div>
+  </header>
+
+  <section class="panel" aria-live="polite">
+    <div class="label">LATEST RELEASE</div>
+    <p id="loading" class="status">Contacting update server…</p>
+    <p id="error" class="status error" hidden></p>
+    <div id="release" hidden>
+      <div class="version"><span id="ver"></span><small id="date"></small></div>
+      <ul class="notes" id="notes"></ul>
+      <div class="downloads">
+        <a class="btn" id="android" href="#" download>
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 18a1 1 0 0 0 1 1h1v3.5a1.5 1.5 0 0 0 3 0V19h2v3.5a1.5 1.5 0 0 0 3 0V19h1a1 1 0 0 0 1-1V8H6v10zM3.5 8A1.5 1.5 0 0 0 2 9.5v7a1.5 1.5 0 0 0 3 0v-7A1.5 1.5 0 0 0 3.5 8zm17 0A1.5 1.5 0 0 0 19 9.5v7a1.5 1.5 0 0 0 3 0v-7A1.5 1.5 0 0 0 20.5 8zM15.53 2.16l1.3-1.3a.5.5 0 0 0-.7-.7l-1.48 1.48A5.96 5.96 0 0 0 12 1c-.96 0-1.86.23-2.66.63L7.85.15a.5.5 0 0 0-.7.7l1.31 1.31A5.97 5.97 0 0 0 6 7h12a5.97 5.97 0 0 0-2.47-4.84zM10 5H9V4h1v1zm5 0h-1V4h1v1z"/></svg>
+          <span>DOWNLOAD FOR ANDROID<small id="android-file">APK</small></span>
+        </a>
+        <a class="btn" id="windows" href="#" download>
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 5.5 10 4.5v7H3zm8-1.15L21 3v8.5H11zM3 12.5h7v7l-7-1zm8 0h10V21l-10-1.4z"/></svg>
+          <span>DOWNLOAD FOR WINDOWS<small id="windows-file">ZIP</small></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="label">HOW TO INSTALL</div>
+    <div class="tabs" role="tablist">
+      <button role="tab" id="tab-android" aria-selected="true" aria-controls="steps-android">ANDROID</button>
+      <button role="tab" id="tab-windows" aria-selected="false" aria-controls="steps-windows">WINDOWS</button>
+    </div>
+    <div id="steps-android" role="tabpanel">
+      <ol class="steps">
+        <li>In the app, tap the <b>UPDATE AVAILABLE</b> notification — or tap <b>Download for Android</b> above.</li>
+        <li>When the download finishes, tap it in your notifications or Downloads.</li>
+        <li>If asked, allow your browser to <b>install unknown apps</b> (one time only).</li>
+        <li>Tap <b>Update</b>. Your settings and Pi address are kept.</li>
+      </ol>
+      <div class="note">Stop the rover before updating. The app sends a stop command automatically when you tap Update.</div>
+    </div>
+    <div id="steps-windows" role="tabpanel" hidden>
+      <ol class="steps">
+        <li>Close Rover Control.</li>
+        <li>Download the Windows ZIP above.</li>
+        <li>Right-click the ZIP → <b>Extract All</b>, and replace your old Rover Control folder.</li>
+        <li>Run <b>flutter_application_1.exe</b> from the new folder.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="label">AUTOMATIC UPDATE NOTICES</div>
+    <p class="status" style="margin:0;line-height:1.7">
+      Rover Control checks this page every time it starts. When a newer version is published here,
+      an amber <b style="color:var(--amber)">UPDATE AVAILABLE</b> notice appears at the top of the app and a dot appears on the menu.
+      You can also open <b style="color:var(--accent)">Settings → Software update → Check for updates</b> at any time.
+    </p>
+  </section>
+
+  <footer>ROVER CONTROL SYSTEM · WATCHDOG PROTECTED</footer>
+</main>
+
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const ua = navigator.userAgent;
+  const platform = /Android/i.test(ua) ? 'android' : /Windows/i.test(ua) ? 'windows' : null;
+
+  function selectTab(name) {
+    for (const t of ['android', 'windows']) {
+      $('tab-' + t).setAttribute('aria-selected', String(t === name));
+      $('steps-' + t).hidden = t !== name;
+    }
+  }
+  $('tab-android').onclick = () => selectTab('android');
+  $('tab-windows').onclick = () => selectTab('windows');
+  if (platform) selectTab(platform);
+
+  function setLink(id, path) {
+    const a = $(id);
+    if (!path) { a.setAttribute('aria-disabled', 'true'); a.removeAttribute('href'); return; }
+    a.href = path;
+    $(id + '-file').textContent = path.split('/').pop();
+  }
+
+  fetch('version.json?t=' + Date.now(), { cache: 'no-store' })
+    .then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then((rel) => {
+      $('ver').textContent = 'v' + (rel.version || '?');
+      $('date').textContent = (rel.released ? 'released ' + rel.released : '') +
+        (rel.build ? ' · build ' + rel.build : '');
+      const notes = $('notes');
+      (rel.notes || []).forEach((n) => {
+        const li = document.createElement('li'); li.textContent = n; notes.appendChild(li);
+      });
+      setLink('android', rel.android);
+      setLink('windows', rel.windows);
+      if (platform) $(platform).classList.add('primary');
+      $('loading').hidden = true;
+      $('release').hidden = false;
+    })
+    .catch((err) => {
+      $('loading').hidden = true;
+      const e = $('error');
+      e.textContent = 'Could not load version.json (' + err.message + '). Run release.ps1 to publish a build.';
+      e.hidden = false;
+    });
+})();
+</script>
+</body>
+</html>
