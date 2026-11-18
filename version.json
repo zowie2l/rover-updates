@@ -1,12 +1,10 @@
 {
-  "version": "1.1.0",
-  "build": 2,
-  "released": "2026-11-18",
-  "notes": [
-    "See-through pilot controls in landscape for a clearer camera view",
-    "Tap-to-update notification when a new version is published",
-    "JARVIS-style British voice greeting at start-up"
-  ],
-  "android": "downloads/RoverControl-1.1.0.apk",
-  "windows": "downloads/RoverControl-1.1.0-windows.zip"
+    "version":  "1.1.0",
+    "build":  3,
+    "released":  "2026-11-18",
+    "notes":  [
+                  "First release with auto-updates"
+              ],
+    "android":  "downloads/RoverControl-1.1.0.apk",
+    "windows":  "downloads/RoverControl-1.1.0-windows.zip"
 }
