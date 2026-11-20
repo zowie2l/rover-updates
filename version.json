@@ -1,12 +1,11 @@
 {
-    "version":  "1.2.0",
-    "build":  4,
+    "version":  "1.2.1",
+    "build":  5,
     "released":  "2026-11-20",
     "notes":  [
-                  "Bluetooth camera stream when Wi-Fi is off",
-                  "Send Wi-Fi details to the rover over Bluetooth",
-                  "Choose Bluetooth or Wi-Fi driving in Settings"
+                  "Bluetooth camera fix",
+                  "Bluetooth camera status on camera panel"
               ],
-    "android":  "downloads/RoverControl-1.2.0.apk",
-    "windows":  "downloads/RoverControl-1.2.0-windows.zip"
+    "android":  "downloads/RoverControl-1.2.1.apk",
+    "windows":  "downloads/RoverControl-1.2.1-windows.zip"
 }
