@@ -1,11 +1,12 @@
 {
-    "version":  "1.2.1",
-    "build":  5,
+    "version":  "1.3.0",
+    "build":  6,
     "released":  "2026-11-20",
     "notes":  [
-                  "Bluetooth camera fix",
-                  "Bluetooth camera status on camera panel"
+                  "Bluetooth-only ESP32-CAM rover",
+                  "Camera no longer zoomed",
+                  "Smoother Bluetooth camera"
               ],
-    "android":  "downloads/RoverControl-1.2.1.apk",
-    "windows":  "downloads/RoverControl-1.2.1-windows.zip"
+    "android":  "downloads/RoverControl-1.3.0.apk",
+    "windows":  "downloads/RoverControl-1.3.0-windows.zip"
 }
