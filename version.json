@@ -1,12 +1,10 @@
 {
-    "version":  "1.4.0",
-    "build":  7,
+    "version":  "1.4.1",
+    "build":  8,
     "released":  "2026-11-20",
     "notes":  [
-                  "IR hole detection",
-                  "Ultrasonic obstacle stop",
-                  "Open/close servo button (ready for later)"
+
               ],
-    "android":  "downloads/RoverControl-1.4.0.apk",
-    "windows":  "downloads/RoverControl-1.4.0-windows.zip"
+    "android":  "downloads/RoverControl-1.4.1.apk",
+    "windows":  "downloads/RoverControl-1.4.1-windows.zip"
 }
