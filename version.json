@@ -1,12 +1,10 @@
 {
-    "version":  "1.5.0",
-    "build":  9,
+    "version":  "1.5.1",
+    "build":  10,
     "released":  "2026-11-22",
     "notes":  [
-                  "Finds your rover on Wi-Fi automatically",
-                  "More reliable Wi-Fi camera and connection-lost warnings",
-                  "Servo open/close control"
+                  "New app icon"
               ],
-    "android":  "downloads/RoverControl-1.5.0.apk",
-    "windows":  "downloads/RoverControl-1.5.0-windows.zip"
+    "android":  "downloads/RoverControl-1.5.1.apk",
+    "windows":  "downloads/RoverControl-1.5.1-windows.zip"
 }
