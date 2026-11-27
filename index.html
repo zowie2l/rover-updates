@@ -119,6 +119,24 @@
     </div>
   </section>
 
+  <section class="panel" id="r4a-panel" hidden>
+    <div class="label">ROVER 4ALL</div>
+    <div style="display:flex;gap:14px;align-items:center">
+      <img src="rover4all-icon.png" alt="" width="64" height="64" style="border-radius:14px;flex:none">
+      <div>
+        <div class="version" style="font-size:24px"><span id="r4a-ver"></span><small id="r4a-date"></small></div>
+        <p class="status" style="margin:6px 0 0;line-height:1.6">A second app for any rover. Switch off the live feed, servo, IR and ultrasonic you do not have and keep just the movement buttons. Works with ESP32 and BLE modules (HM-10, HC-08).</p>
+      </div>
+    </div>
+    <ul class="notes" id="r4a-notes"></ul>
+    <div class="downloads">
+      <a class="btn primary" id="r4a-android" href="#" download>
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 18a1 1 0 0 0 1 1h1v3.5a1.5 1.5 0 0 0 3 0V19h2v3.5a1.5 1.5 0 0 0 3 0V19h1a1 1 0 0 0 1-1V8H6v10zM3.5 8A1.5 1.5 0 0 0 2 9.5v7a1.5 1.5 0 0 0 3 0v-7A1.5 1.5 0 0 0 3.5 8zm17 0A1.5 1.5 0 0 0 19 9.5v7a1.5 1.5 0 0 0 3 0v-7A1.5 1.5 0 0 0 20.5 8z"/></svg>
+        <span>DOWNLOAD ROVER 4ALL<small id="r4a-android-file">APK</small></span>
+      </a>
+    </div>
+  </section>
+
   <section class="panel">
     <div class="label">HOW TO INSTALL</div>
     <div class="tabs" role="tablist">
@@ -191,6 +209,17 @@
       });
       setLink('android', rel.android);
       setLink('windows', rel.windows);
+      const r4a = rel.rover4all;
+      if (r4a && r4a.android) {
+        $('r4a-ver').textContent = 'v' + (r4a.version || '?');
+        $('r4a-date').textContent = r4a.released ? 'released ' + r4a.released : '';
+        (r4a.notes || []).forEach((n) => {
+          const li = document.createElement('li'); li.textContent = n; $('r4a-notes').appendChild(li);
+        });
+        const a = $('r4a-android'); a.href = r4a.android;
+        $('r4a-android-file').textContent = r4a.android.split('/').pop();
+        $('r4a-panel').hidden = false;
+      }
       if (platform) $(platform).classList.add('primary');
       $('loading').hidden = true;
       $('release').hidden = false;
